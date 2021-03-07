@@ -5,15 +5,18 @@ end
 
 ActiveRecord::Schema.define do
   create_table :mailkick_opt_outs do |t|
-    t.string :email
+    if ENV["ENCRYPTED"]
+      t.text :email_ciphertext
+      t.string :email_bidx, index: true
+    else
+      t.string :email, index: true
+    end
     t.references :user, polymorphic: true
     t.boolean :active, null: false, default: true
     t.string :reason
     t.string :list
     t.timestamps null: false
   end
-
-  add_index :mailkick_opt_outs, :email
 
   create_table :users do |t|
     t.string :email

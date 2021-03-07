@@ -13,13 +13,25 @@ module Mailkick
       end
 
       def generate_model
-        unless options[:unencrypted]
+        if encrypted?
           template "model_encrypted.rb", "app/models/mailkick/opt_out.rb"
         end
       end
 
       def migration_version
         "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
+      end
+
+      def email_column
+        if encrypted?
+          "t.text :email_ciphertext\n      t.string :email_bidx, index: true"
+        else
+          "t.string :email, index: true"
+        end
+      end
+
+      def encrypted?
+        !options[:unencrypted]
       end
     end
   end
