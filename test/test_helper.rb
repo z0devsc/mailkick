@@ -10,7 +10,11 @@ Combustion.initialize! :active_record, :action_mailer
 ActiveRecord::Base.logger = ActiveSupport::Logger.new(STDOUT) if ENV["VERBOSE"]
 ActionMailer::Base.delivery_method = :test
 
-if ENV["ENCRYPTED"]
+def encrypted?
+  ENV["ENCRYPTED"]
+end
+
+if encrypted?
   Lockbox.master_key = Lockbox.generate_key
   Mailkick::OptOut.encrypts :email
   Mailkick::OptOut.blind_index :email

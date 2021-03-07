@@ -28,8 +28,11 @@ class MailkickTest < Minitest::Test
     assert_equal user, opt_out.user
 
     assert user.opted_out?
-    assert_equal 1, User.opted_out.count
-    assert_equal 0, User.not_opted_out.count
+
+    unless encrypted?
+      assert_equal 1, User.opted_out.count
+      assert_equal 0, User.not_opted_out.count
+    end
 
     assert_equal Set.new([email]), Mailkick.opted_out_emails
     assert_equal Set.new([user]), Mailkick.opted_out_users
@@ -78,12 +81,16 @@ class MailkickTest < Minitest::Test
   end
 
   def test_user_opted_out_scope
+    skip if encrypted?
+
     user = User.create!
     user.opt_out
     assert_equal 1, User.opted_out.count
   end
 
   def test_user_not_opted_out
+    skip if encrypted?
+
     User.create!
     assert_equal 1, User.not_opted_out.count
   end
