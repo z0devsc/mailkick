@@ -1,6 +1,7 @@
 ## 0.5.0 (unreleased)
 
 - Added support for encrypted emails
+- Dropped support for Action Mailer < 5.2 and Ruby < 2.6
 
 ## 0.4.3 (2020-11-01)
 
