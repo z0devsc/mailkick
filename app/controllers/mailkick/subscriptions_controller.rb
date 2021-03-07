@@ -8,12 +8,12 @@ module Mailkick
     end
 
     def unsubscribe
-      Mailkick.opt_out(@options)
+      Mailkick.opt_out(**@options)
       redirect_to subscription_path(params[:id])
     end
 
     def subscribe
-      Mailkick.opt_in(@options)
+      Mailkick.opt_in(**@options)
       redirect_to subscription_path(params[:id])
     end
 
@@ -35,7 +35,7 @@ module Mailkick
     end
 
     def opted_out?
-      Mailkick.opted_out?(@options)
+      Mailkick.opted_out?(**@options)
     end
     helper_method :opted_out?
 

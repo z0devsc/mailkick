@@ -36,12 +36,12 @@ module Mailkick
     end
   end
 
-  def self.opted_out?(options)
-    opt_outs(options).any?
+  def self.opted_out?(**options)
+    opt_outs(**options).any?
   end
 
-  def self.opt_out(options)
-    unless opted_out?(options)
+  def self.opt_out(**options)
+    unless opted_out?(**options)
       time = options[:time] || Time.now
       Mailkick::OptOut.create! do |o|
         o.email = options[:email]
@@ -55,47 +55,45 @@ module Mailkick
     true
   end
 
-  def self.opt_in(options)
-    opt_outs(options).each do |opt_out|
+  def self.opt_in(**options)
+    opt_outs(**options).each do |opt_out|
       opt_out.active = false
       opt_out.save!
     end
     true
   end
 
-  def self.opt_outs(options = {})
+  def self.opt_outs(email: nil, user: nil, list: nil)
     relation = Mailkick::OptOut.where(active: true)
 
     contact_relation = Mailkick::OptOut.none
-    if (email = options[:email])
+    if email
       contact_relation = contact_relation.or(Mailkick::OptOut.where(email: email))
     end
-    if (user = options[:user])
+    if user
       contact_relation = contact_relation.or(
-        Mailkick::OptOut.where("user_id = ? AND user_type = ?", user.id, user.class.name)
+        Mailkick::OptOut.where(user: user)
       )
     end
     relation = relation.merge(contact_relation) if email || user
 
     relation =
-      if options[:list]
-        relation.where("list IS NULL OR list = ?", options[:list])
+      if list
+        relation.where("list IS NULL OR list = ?", list)
       else
-        relation.where("list IS NULL")
+        relation.where(list: nil)
       end
 
     relation
   end
 
-  # TODO use keyword arguments
-  def self.opted_out_emails(options = {})
-    Set.new(opt_outs(options).where.not(email: nil).distinct.pluck(:email))
+  def self.opted_out_emails(**options)
+    Set.new(opt_outs(**options).where.not(email: nil).distinct.pluck(:email))
   end
 
-  # TODO use keyword arguments
   # does not take into account emails
-  def self.opted_out_users(options = {})
-    Set.new(opt_outs(options).where.not(user_id: nil).map(&:user))
+  def self.opted_out_users(**options)
+    Set.new(opt_outs(**options).where.not(user_id: nil).map(&:user))
   end
 
   def self.message_verifier
