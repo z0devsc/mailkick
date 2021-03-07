@@ -1,3 +1,7 @@
+## 0.5.0 (unreleased)
+
+- Added support for encrypted emails
+
 ## 0.4.3 (2020-11-01)
 
 - Added support for AWS SES

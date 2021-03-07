@@ -18,10 +18,17 @@ Add this line to your application’s Gemfile:
 gem 'mailkick'
 ```
 
-And run the generator. This creates a model to store opt-outs.
+To encrypt email addresses, install [Lockbox](https://github.com/ankane/lockbox) and [Blind Index](https://github.com/ankane/blind_index) and run:
 
 ```sh
 rails generate mailkick:install
+rails db:migrate
+```
+
+If you prefer not to encrypt data, run:
+
+```sh
+rails generate mailkick:install --unencrypted
 rails db:migrate
 ```
 
