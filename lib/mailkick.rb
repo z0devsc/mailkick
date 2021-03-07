@@ -108,6 +108,14 @@ module Mailkick
     user ||= Mailkick.user_method.call(email) if Mailkick.user_method
     message_verifier.generate([email, user.try(:id), user.try(:class).try(:name), list])
   end
+
+  def self.email_encrypted?
+    # memoize
+    unless defined?(@email_encrypted)
+      @email_encrypted = (Mailkick::OptOut.try(:lockbox_attributes) || {}).key?(:email)
+    end
+    @email_encrypted
+  end
 end
 
 ActiveSupport.on_load :action_mailer do

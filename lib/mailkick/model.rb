@@ -4,6 +4,8 @@ module Mailkick
       email_key = opts[:email_key] || :email
       class_eval do
         scope :opted_out, lambda { |options = {}|
+          raise "This scope is not supported with encryption" if Mailkick.email_encrypted?
+
           binds = [name, true]
           if options[:list]
             query = "(mailkick_opt_outs.list IS NULL OR mailkick_opt_outs.list = ?)"
